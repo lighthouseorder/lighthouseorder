@@ -1,245 +1,171 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>طلب الزبون</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نموذج الطلب</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
       direction: rtl;
-      margin: 40px auto;
-      max-width: 800px;
-      background-color: #f9f9f9;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-    h2, h3 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .customer-info {
-      background-color: #f0f8ff;
       padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      background-color: #f2f2f2;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
-    input[type="text"], input[type="number"], select {
+    input, select {
+      width: 100%;
       padding: 8px;
-      width: 100%;
-      max-width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
       margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 25px;
+    .item-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+    .item-row input {
+      flex: 1;
     }
-    th {
-      background-color: #e0f0ff;
+    .item-name {
+      flex: 2;
     }
-    .total {
-      margin-top: 25px;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: left;
-    }
-    .btn {
-      background-color: #007BFF;
+    button {
+      background-color: #4CAF50;
       color: white;
-      padding: 12px 24px;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 12px 20px;
       margin-top: 20px;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 5px;
     }
-    .btn:hover {
-      background-color: #0056b3;
+    button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-
-  <h2>نموذج طلب الزبون</h2>
-
+  <h1>نموذج طلب الزبون</h1>
   <form id="orderForm">
-    <div class="customer-info">
-      <h3>معلومات الزبون</h3>
-      
-      <label>الاسم الكامل:</label>
-      <input type="text" id="customerName" required>
+    <label for="customerName">اسم الزبون</label>
+    <input type="text" id="customerName" required />
 
-      <label>رقم الهاتف:</label>
-      <input type="text" id="customerPhone" required>
+    <label for="customerArea">المنطقة</label>
+    <select id="customerArea" required>
+      <option value="">اختر المنطقة</option>
+      <option value="الضاحية">الضاحية</option>
+      <option value="الشويفات">الشويفات</option>
+      <option value="بيروت">بيروت</option>
+      <option value="الحدث">الحدث</option>
+      <option value="حارة حريك">حارة حريك</option>
+    </select>
 
-      <label>المنطقة:</label>
-      <select id="customerArea" required>
-        <option value="">-- اختر المنطقة --</option>
-        <option value="بيروت">بيروت</option>
-        <option value="طرابلس">طرابلس</option>
-        <option value="صيدا">صيدا</option>
-        <option value="صور">صور</option>
-        <option value="زحلة">زحلة</option>
-        <option value="جبيل">جبيل</option>
-        <option value="بعبدا">بعبدا</option>
-        <option value="النبطية">النبطية</option>
-        <option value="بعلبك">بعلبك</option>
-        <option value="عكار">عكار</option>
-        <option value="الهرمل">الهرمل</option>
-        <option value="الشوف">الشوف</option>
-        <option value="البقاع الغربي">البقاع الغربي</option>
-        <option value="كسروان">كسروان</option>
-        <option value="المتن">المتن</option>
-        <option value="الضاحية">الضاحية</option>
-        <option value="الشويفات">الشويفات</option>
-      </select>
+    <label for="deliveryDate">تاريخ التوصيل</label>
+    <input type="date" id="deliveryDate" value="" required />
 
-      <label>العنوان التفصيلي:</label>
-      <input type="text" id="customerAddress" required>
+    <label>الطلبات</label>
+
+    <div class="item-row">
+      <input class="item-name" type="text" value="صمون" readonly />
+      <input class="item-quantity" type="number" min="0" value="0" />
+      <span class="item-price" hidden>1.00</span>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>الصنف</th>
-          <th>التعبئة</th>
-          <th>السعر ($)</th>
-          <th>الكمية</th>
-        </tr>
-      </thead>
-      <tbody id="itemsTable">
-        <!-- الأصناف -->
-      </tbody>
-    </table>
+    <div class="item-row">
+      <input class="item-name" type="text" value="برغر" readonly />
+      <input class="item-quantity" type="number" min="0" value="0" />
+      <span class="item-price" hidden>1.80</span>
+    </div>
 
-    <div class="total">مجموع الفاتورة: <span id="total">0</span> $</div>
+    <div class="item-row">
+      <input class="item-name" type="text" value="توست" readonly />
+      <input class="item-quantity" type="number" min="0" value="0" />
+      <span class="item-price" hidden>1.50</span>
+    </div>
 
-    <button type="submit" class="btn">إرسال الطلب</button>
+    <div class="item-row">
+      <input class="item-name" type="text" value="فاهيتا" readonly />
+      <input class="item-quantity" type="number" min="0" value="0" />
+      <span class="item-price" hidden>2.00</span>
+    </div>
+
+    <div class="item-row">
+      <input class="item-name" type="text" value="صاج" readonly />
+      <input class="item-quantity" type="number" min="0" value="0" />
+      <span class="item-price" hidden>1.20</span>
+    </div>
+
+    <button type="submit">إرسال الطلب</button>
   </form>
 
   <script>
-    const products = [
-      { name: "برغر سمسم", pack: 6, price: 1.8 },
-      { name: "برغر سادة", pack: 6, price: 1.8 },
-      { name: "برغر ذرة", pack: 6, price: 1.8 },
-      { name: "برغر يريوش", pack: 6, price: 2 },
-      { name: "برغر اسمر سبع حبوب", pack: 6, price: 3 },
-      { name: "برغر بريوشيه 10 سنتم", pack: 6, price: 1.8 },
-      { name: "مطاعم", pack: 5, price: 1.25 },
-      { name: "مطاعم اسمر", pack: 5, price: 2.25 },
-      { name: "ساب مارين وسط", pack: 4, price: 1.6 },
-      { name: "ساب مارين عريض", pack: 4, price: 1.8 },
-      { name: "ساب مارين رفيع", pack: 5, price: 1.8 },
-      { name: "ميني ساب", pack: 6, price: 1.35 },
-      { name: "تندر", pack: 5, price: 1.8 },
-      { name: "بول صغير", pack: 8, price: 1.5 },
-      { name: "بول كبير كل حبة بكيس", pack: 8, price: 1.75 },
-      { name: "هوت دوغ", pack: 6, price: 1.75 },
-      { name: "شاباتا ذرة", pack: 1, price: 0.5 },
-      { name: "شاباتا اسمر", pack: 1, price: 0.6 },
-      { name: "شاباتا طويل عريض", pack: 1, price: 0.75 },
-      { name: "عجينة بيتزا كبيرة", pack: 1, price: 0.75 },
-      { name: "خبز تركي", pack: 1, price: 1.75 },
-      { name: "كعكة كنافة", pack: 1, price: 0.35 },
-      { name: "كعك مطحون", pack: "1 كلغ", price: 3 },
-      { name: "بلاك برغر", pack: 6, price: 3 },
-      { name: "بطاطا برغر", pack: 6, price: 3 }
-    ];
+    // تعبئة التاريخ بشكل تلقائي
+    document.getElementById("deliveryDate").value = new Date().toISOString().split("T")[0];
 
-    const itemsTable = document.getElementById("itemsTable");
-    const totalSpan = document.getElementById("total");
-
-    products.forEach((product, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${product.name}</td>
-        <td>${product.pack}</td>
-        <td>${product.price.toFixed(2)}</td>
-        <td><input type="number" min="0" value="0" data-index="${index}" class="qtyInput"></td>
-      `;
-      itemsTable.appendChild(row);
-
-      row.querySelector(".qtyInput").addEventListener("input", calculateTotal);
-    });
-
-    function calculateTotal() {
-      let total = 0;
-      document.querySelectorAll(".qtyInput").forEach(input => {
-        const index = input.dataset.index;
-        const qty = parseInt(input.value) || 0;
-        total += qty * products[index].price;
-      });
-      totalSpan.textContent = total.toFixed(2);
-    }
-
-    document.getElementById("orderForm").addEventListener("submit", function(e) {
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
+      const customerName = document.getElementById("customerName").value;
+      const customerArea = document.getElementById("customerArea").value;
+      const deliveryDate = document.getElementById("deliveryDate").value;
+
+      const itemRows = document.querySelectorAll(".item-row");
       const items = [];
-      document.querySelectorAll(".qtyInput").forEach(input => {
-        const qty = parseInt(input.value);
-        const index = input.dataset.index;
-        if (qty > 0) {
-          items.push({
-            name: products[index].name,
-            quantity: qty,
-            unitPrice: products[index].price,
-            total: (qty * products[index].price).toFixed(2)
-          });
+
+      itemRows.forEach((row) => {
+        const itemName = row.querySelector(".item-name").value;
+        const quantity = parseInt(row.querySelector(".item-quantity").value);
+        const unitPrice = parseFloat(row.querySelector(".item-price").textContent);
+        const total = (quantity * unitPrice).toFixed(2);
+
+        if (quantity > 0) {
+          items.push(`${itemName} × ${quantity} = ${total}$`);
         }
       });
 
-      if (items.length === 0) {
-        alert("الرجاء إدخال كمية لواحد على الأقل من المنتجات");
-        return;
-      }
-
-      const order = {
-        customer: document.getElementById("customerName").value.trim(),
-        phone: document.getElementById("customerPhone").value.trim(),
-        area: document.getElementById("customerArea").value,
-        address: document.getElementById("customerAddress").value.trim(),
-        items: items,
-        total: totalSpan.textContent,
-        date: new Date().toLocaleString()
+      const orderData = {
+        name: customerName,
+        area: customerArea,
+        date: deliveryDate,
+        items: items.join("\n"),
       };
 
-      saveOrder(order);
-
-      alert(`تم إرسال الطلب بنجاح!\nالزبون: ${order.customer}\nالمنطقة: ${order.area}\nالمجموع: ${order.total}$`);
-      
-      document.getElementById("orderForm").reset();
-      totalSpan.textContent = "0";
-    });
-
-    function saveOrder(order) {
       fetch("https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec", {
         method: "POST",
-        mode: "no-cors",
+        body: JSON.stringify(orderData),
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(order)
-      }).then(() => {
-        console.log("تم إرسال الطلب إلى Google Sheets");
-      }).catch(error => {
-        console.error("خطأ في الإرسال إلى Google Sheets:", error);
-      });
-    }
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          alert("تم إرسال الطلب بنجاح!");
+          document.getElementById("orderForm").reset();
+          document.getElementById("deliveryDate").value = new Date().toISOString().split("T")[0];
+        })
+        .catch((error) => {
+          alert("حدث خطأ أثناء إرسال الطلب.");
+          console.error(error);
+        });
+    });
   </script>
 </body>
 </html>
