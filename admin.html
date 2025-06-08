@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>كشف الطلبات</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      direction: rtl;
+      margin: 30px auto;
+      max-width: 1100px;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .filters, .totals, .print-buttons {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, input[type="date"] {
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #e0f0ff;
+    }
+    .invoice {
+      background-color: #fff;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .section-title {
+      margin-top: 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-bottom: 2px solid #007BFF;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>كشف الطلبات</h2>
+  <div class="filters">
+    <label>المنطقة:</label>
+    <select id="filterArea">
+      <option value="">كل المناطق</option>
+    </select>
+
+    <label>التاريخ:</label>
+    <input type="date" id="filterDate">
+
+    <button class="btn" onclick="renderOrders()">تطبيق الفلاتر</button>
+  </div>
+
+  <div class="print-buttons">
+    <button class="btn" onclick="printDiv('invoices')">طباعة الكشف كامل</button>
+    <button class="btn" onclick="printDiv('invoicesFiltered')">طباعة بحسب الفلاتر</button>
+  </div>
+
+  <div class="totals">
+    <span><strong>مجموع الفواتير الكلي: </strong><span id="totalAll">0</span> $</span>
+  </div>
+
+  <div id="invoices"></div>
+  <div class="section-title">تقرير الكميات حسب الصنف</div>
+  <div id="report"></div>
+
+  <script>
+    const PACK_SIZE = {
+      "برغر سمسم": 6, "برغر سادة": 6, "برغر ذرة": 6, "برغر يريوش": 6,
+      "برغر اسمر سبع حبوب": 6, "برغر بريوشيه 10 سنتم": 6, "مطاعم": 5,
+      "مطاعم اسمر": 5, "ساب مارين وسط": 4, "ساب مارين عريض": 4,
+      "ساب مارين رفيع": 5, "ميني ساب": 6, "تندر": 5, "بول صغير": 8,
+      "بول كبير كل حبة بكيس": 8, "هوت دوغ": 6, "شاباتا ذرة": 1,
+      "شاباتا اسمر": 1, "شاباتا طويل عريض": 1, "عجينة بيتزا كبيرة": 1,
+      "خبز تركي": 1, "كعكة كنافة": 1, "كعك مطحون": 1, "بلاك برغر": 6,
+      "بطاطا برغر": 6
+    };
+
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    function groupOrders() {
+      const map = {};
+      orders.forEach(order => {
+        const key = order.customer + order.phone + order.area + order.date.split(",")[0];
+        if (!map[key]) map[key] = { ...order, items: [...order.items] };
+        else map[key].items.push(...order.items);
+      });
+      return Object.values(map);
+    }
+
+    function renderOrders() {
+      const area = document.getElementById("filterArea").value;
+      const date = document.getElementById("filterDate").value;
+      const invoices = document.getElementById("invoices");
+      const reportDiv = document.getElementById("report");
+      invoices.innerHTML = "";
+      reportDiv.innerHTML = "";
+
+      const grouped = groupOrders().filter(order => {
+        const sameArea = !area || order.area === area;
+        const sameDate = !date || order.date.startsWith(new Date(date).toLocaleDateString());
+        return sameArea && sameDate;
+      });
+
+      let totalAll = 0;
+      const productCount = {};
+
+      grouped.forEach(order => {
+        const invoice = document.createElement("div");
+        invoice.className = "invoice";
+        invoice.innerHTML = `
+          <strong>الاسم:</strong> ${order.customer}<br>
+          <strong>الهاتف:</strong> ${order.phone}<br>
+          <strong>المنطقة:</strong> ${order.area}<br>
+          <strong>العنوان:</strong> ${order.address}<br>
+          <strong>التاريخ:</strong> ${order.date}<br>
+          <table>
+            <thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+            <tbody>
+              ${order.items.map(item => {
+                const pack = PACK_SIZE[item.name] || 1;
+                const qty = item.quantity * pack;
+                productCount[item.name] = (productCount[item.name] || 0) + qty;
+                return `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.unitPrice}</td><td>${item.total}</td></tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+          <strong>مجموع الفاتورة: ${order.total}$</strong>
+        `;
+        invoices.appendChild(invoice);
+        totalAll += parseFloat(order.total);
+      });
+
+      document.getElementById("totalAll").textContent = totalAll.toFixed(2);
+
+      // تقرير الكميات
+      const reportTable = document.createElement("table");
+      reportTable.innerHTML = `<thead><tr><th>الصنف</th><th>الكمية الإجمالية</th></tr></thead>`;
+      const tbody = document.createElement("tbody");
+      Object.entries(productCount).forEach(([name, qty]) => {
+        tbody.innerHTML += `<tr><td>${name}</td><td>${qty}</td></tr>`;
+      });
+      reportTable.appendChild(tbody);
+      reportDiv.appendChild(reportTable);
+    }
+
+    function printDiv(divId) {
+      const original = document.body.innerHTML;
+      const content = document.getElementById(divId).innerHTML;
+      document.body.innerHTML = content;
+      window.print();
+      document.body.innerHTML = original;
+      location.reload();
+    }
+
+    function populateAreas() {
+      const areaSelect = document.getElementById("filterArea");
+      const allAreas = ["بيروت","طرابلس","صيدا","صور","زحلة","جبيل","بعبدا",
+        "النبطية","بعلبك","عكار","الهرمل","الشوف","البقاع الغربي",
+        "كسروان","المتن","الضاحية","الشويفات"];
+      allAreas.forEach(area => {
+        const option = document.createElement("option");
+        option.value = area;
+        option.textContent = area;
+        areaSelect.appendChild(option);
+      });
+    }
+
+    window.onload = function() {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("filterDate").value = today;
+      populateAreas();
+      renderOrders();
+    };
+  </script>
+</body>
+</html>
