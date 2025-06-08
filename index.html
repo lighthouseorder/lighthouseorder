@@ -88,7 +88,7 @@
 
       <label>المنطقة:</label>
       <select id="customerArea" required>
-        <option value="" disabled selected>-- اختر المنطقة --</option>
+        <option value="">-- اختر المنطقة --</option>
         <option value="بيروت">بيروت</option>
         <option value="طرابلس">طرابلس</option>
         <option value="صيدا">صيدا</option>
@@ -121,7 +121,9 @@
           <th>الكمية</th>
         </tr>
       </thead>
-      <tbody id="itemsTable"></tbody>
+      <tbody id="itemsTable">
+        <!-- الأصناف -->
+      </tbody>
     </table>
 
     <div class="total">مجموع الفاتورة: <span id="total">0</span> $</div>
@@ -206,16 +208,10 @@
         return;
       }
 
-      const areaValue = document.getElementById("customerArea").value;
-      if (!areaValue) {
-        alert("الرجاء اختيار المنطقة.");
-        return;
-      }
-
       const order = {
         customer: document.getElementById("customerName").value.trim(),
         phone: document.getElementById("customerPhone").value.trim(),
-        area: areaValue,
+        area: document.getElementById("customerArea").value,
         address: document.getElementById("customerAddress").value.trim(),
         items: items,
         total: totalSpan.textContent,
@@ -231,9 +227,18 @@
     });
 
     function saveOrder(order) {
-      let orders = JSON.parse(localStorage.getItem('orders')) || [];
-      orders.push(order);
-      localStorage.setItem('orders', JSON.stringify(orders));
+      fetch("https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(order)
+      }).then(() => {
+        console.log("تم إرسال الطلب إلى Google Sheets");
+      }).catch(error => {
+        console.error("خطأ في الإرسال إلى Google Sheets:", error);
+      });
     }
   </script>
 </body>
