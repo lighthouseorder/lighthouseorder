@@ -1,64 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>طلبية الزبون</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h2 { color: #333; }
-    form { max-width: 500px; margin: auto; }
-    label { display: block; margin-top: 10px; }
-    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-    button { margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #45a049; }
-  </style>
-</head>
-<body>
-  <h2>نموذج طلب الزبون</h2>
-  <form id="orderForm">
-    <label for="customerName">اسم الزبون:</label>
-    <input type="text" id="customerName" name="customerName" required>
+<script>
+  const sheetURL = "https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec";
 
-    <label for="area">المنطقة:</label>
-    <select id="area" name="area" required>
-      <option value="الضاحية">الضاحية</option>
-      <option value="الشويفات">الشويفات</option>
-      <option value="برج البراجنة">برج البراجنة</option>
-      <option value="الحدث">الحدث</option>
-      <option value="حارة حريك">حارة حريك</option>
-      <option value="الغبيري">الغبيري</option>
-    </select>
+  document.getElementById("order-form").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-    <label for="items">الصنف (مثال: خبز أبيض - 2):</label>
-    <textarea id="items" name="items" rows="4" placeholder="اكتب كل صنف وعدده بسطر لوحده" required></textarea>
+    const customerName = document.getElementById("customer-name").value;
+    const area = document.getElementById("area").value;
+    const date = new Date().toLocaleDateString("en-GB"); // فقط التاريخ
+    const itemRows = document.querySelectorAll(".item-row");
+    const items = [];
 
-    <button type="submit">إرسال الطلب</button>
-  </form>
-
-  <p id="responseMessage" style="margin-top: 20px;"></p>
-
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec";
-    const form = document.getElementById("orderForm");
-    const responseMessage = document.getElementById("responseMessage");
-
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-
-      fetch(scriptURL, {
-        method: "POST",
-        body: new FormData(form)
-      })
-      .then(response => {
-        responseMessage.innerText = "تم إرسال الطلب بنجاح!";
-        form.reset();
-      })
-      .catch(error => {
-        responseMessage.innerText = "حدث خطأ أثناء إرسال الطلب.";
-        console.error("Error!", error.message);
-      });
+    itemRows.forEach(row => {
+      const item = row.querySelector(".item-name").value.trim();
+      const quantity = row.querySelector(".item-quantity").value.trim();
+      if (item && quantity) {
+        items.push(`${item} - ${quantity}`);
+      }
     });
-  </script>
-</body>
-</html>
+
+    const formData = new FormData();
+    formData.append("customer", customerName);
+    formData.append("area", area);
+    formData.append("date", date);
+    formData.append("items", items.join(", "));
+
+    fetch(sheetURL, {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      alert("تم إرسال الطلب بنجاح ✅");
+      document.getElementById("order-form").reset();
+    })
+    .catch(error => {
+      alert("حدث خطأ أثناء الإرسال ❌");
+      console.error(error);
+    });
+  });
+</script>
