@@ -2,151 +2,90 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>طلب الزبون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نموذج الطلب</title>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      direction: rtl;
-      padding: 20px;
-      background-color: #f9f9f9;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #ccc;
-      max-width: 500px;
-      margin: auto;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      margin-top: 20px;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .item-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .item-row input {
-      flex: 1;
-    }
+    body { font-family: Arial, sans-serif; direction: rtl; margin: 20px; background: #f5f5f5; }
+    .order-form { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    .product-group { display: flex; gap: 10px; margin-top: 10px; }
+    .product-group input, .product-group select { flex: 1; }
+    .products-container { margin-top: 10px; }
+    button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; }
+    button:hover { background-color: #0056b3; }
   </style>
 </head>
 <body>
+  <div class="order-form">
+    <h2>نموذج الطلب</h2>
+    <form id="orderForm">
+      <label for="customerName">اسم الزبون:</label>
+      <input type="text" id="customerName" name="customerName" required />
 
-  <h1>نموذج طلب الزبون</h1>
+      <label for="area">المنطقة:</label>
+      <select id="area" name="area" required>
+        <option value="بيروت">بيروت</option>
+        <option value="الضاحية">الضاحية</option>
+        <option value="الشويفات">الشويفات</option>
+        <option value="برج البراجنة">برج البراجنة</option>
+        <option value="حارة حريك">حارة حريك</option>
+      </select>
 
-  <form id="orderForm">
-    <label>اسم الزبون:</label>
-    <input type="text" id="customerName" required />
+      <label for="date">التاريخ:</label>
+      <input type="date" id="date" name="date" required value=""/>
 
-    <label>المنطقة:</label>
-    <select id="area" required>
-      <option value="">اختر المنطقة</option>
-      <option value="الضاحية">الضاحية</option>
-      <option value="الشويفات">الشويفات</option>
-      <option value="بيروت">بيروت</option>
-      <option value="عين الرمانة">عين الرمانة</option>
-    </select>
-
-    <label>التاريخ:</label>
-    <input type="date" id="date" required />
-
-    <div id="itemsContainer">
-      <div class="item-row">
-        <input type="text" placeholder="اسم الصنف" class="productName" required />
-        <input type="number" placeholder="الكمية" class="productQty" required />
+      <div class="products-container" id="productsContainer">
+        <div class="product-group">
+          <select class="productName" name="productName[]" required>
+            <option value="خبز عربي">خبز عربي</option>
+            <option value="خبز صاج">خبز صاج</option>
+            <option value="خبز برغر">خبز برغر</option>
+            <option value="خبز فاهيتا">خبز فاهيتا</option>
+            <option value="خبز سمون">خبز سمون</option>
+          </select>
+          <input type="number" class="productQty" name="productQty[]" placeholder="الكمية" required />
+        </div>
       </div>
-    </div>
 
-    <button type="button" onclick="addItem()">إضافة صنف</button>
-    <button type="submit">إرسال الطلب</button>
-  </form>
+      <button type="button" onclick="addProduct()">إضافة صنف</button>
+      <button type="submit">إرسال الطلب</button>
+    </form>
+  </div>
 
   <script>
-    // ضبط التاريخ الحالي تلقائيًا
+    // تعبئة التاريخ تلقائيًا بتاريخ اليوم
     document.getElementById("date").valueAsDate = new Date();
+
+    function addProduct() {
+      const container = document.getElementById("productsContainer");
+      const group = document.createElement("div");
+      group.className = "product-group";
+
+      group.innerHTML = `
+        <select class="productName" name="productName[]" required>
+          <option value="خبز عربي">خبز عربي</option>
+          <option value="خبز صاج">خبز صاج</option>
+          <option value="خبز برغر">خبز برغر</option>
+          <option value="خبز فاهيتا">خبز فاهيتا</option>
+          <option value="خبز سمون">خبز سمون</option>
+        </select>
+        <input type="number" class="productQty" name="productQty[]" placeholder="الكمية" required />
+      `;
+
+      container.appendChild(group);
+    }
 
     const sheetURL = "https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec";
 
-    function addItem() {
-      const container = document.getElementById("itemsContainer");
-      const newRow = document.createElement("div");
-      newRow.className = "item-row";
-      newRow.innerHTML = `
-        <input type="text" placeholder="اسم الصنف" class="productName" required />
-        <input type="number" placeholder="الكمية" class="productQty" required />
-      `;
-      container.appendChild(newRow);
-    }
-
     document.getElementById("orderForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
-      const name = document.getElementById("customerName").value;
-      const area = document.getElementById("area").value;
-      const date = document.getElementById("date").value;
-
-      const productNames = document.querySelectorAll(".productName");
-      const productQtys = document.querySelectorAll(".productQty");
-
-      let items = [];
-      for (let i = 0; i < productNames.length; i++) {
-        const itemName = productNames[i].value.trim();
-        const itemQty = productQtys[i].value.trim();
-        if (itemName && itemQty) {
-          items.push({ name: itemName, qty: itemQty });
-        }
-      }
-
-      // إرسال الطلب لكل صنف كسطر منفصل
-      items.forEach(item => {
-        fetch(sheetURL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            name: name,
-            area: area,
-            date: date,
-            product: item.name,
-            quantity: item.qty
-          })
-        });
-      });
-
-      alert("تم إرسال الطلب بنجاح!");
-      document.getElementById("orderForm").reset();
-      document.getElementById("itemsContainer").innerHTML = `
-        <div class="item-row">
-          <input type="text" placeholder="اسم الصنف" class="productName" required />
-          <input type="number" placeholder="الكمية" class="productQty" required />
-        </div>
-      `;
-      document.getElementById("date").valueAsDate = new Date();
+      const formData = new FormData(this);
+      fetch(sheetURL, { method: "POST", body: formData })
+        .then(res => alert("تم إرسال الطلب بنجاح"))
+        .catch(err => alert("حدث خطأ!"));
     });
   </script>
-
 </body>
 </html>
