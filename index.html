@@ -1,90 +1,63 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نموذج الطلب</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>طلبية الزبون</title>
   <style>
-    body { font-family: Arial, sans-serif; direction: rtl; margin: 20px; background: #f5f5f5; }
-    .order-form { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    h2 { text-align: center; margin-bottom: 20px; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { color: #333; }
+    form { max-width: 500px; margin: auto; }
     label { display: block; margin-top: 10px; }
-    input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
-    .product-group { display: flex; gap: 10px; margin-top: 10px; }
-    .product-group input, .product-group select { flex: 1; }
-    .products-container { margin-top: 10px; }
-    button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; }
-    button:hover { background-color: #0056b3; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
   </style>
 </head>
 <body>
-  <div class="order-form">
-    <h2>نموذج الطلب</h2>
-    <form id="orderForm">
-      <label for="customerName">اسم الزبون:</label>
-      <input type="text" id="customerName" name="customerName" required />
+  <h2>نموذج طلب الزبون</h2>
+  <form id="orderForm">
+    <label for="customerName">اسم الزبون:</label>
+    <input type="text" id="customerName" name="customerName" required>
 
-      <label for="area">المنطقة:</label>
-      <select id="area" name="area" required>
-        <option value="بيروت">بيروت</option>
-        <option value="الضاحية">الضاحية</option>
-        <option value="الشويفات">الشويفات</option>
-        <option value="برج البراجنة">برج البراجنة</option>
-        <option value="حارة حريك">حارة حريك</option>
-      </select>
+    <label for="area">المنطقة:</label>
+    <select id="area" name="area" required>
+      <option value="الضاحية">الضاحية</option>
+      <option value="الشويفات">الشويفات</option>
+      <option value="برج البراجنة">برج البراجنة</option>
+      <option value="الحدث">الحدث</option>
+      <option value="حارة حريك">حارة حريك</option>
+      <option value="الغبيري">الغبيري</option>
+    </select>
 
-      <label for="date">التاريخ:</label>
-      <input type="date" id="date" name="date" required value=""/>
+    <label for="items">الصنف (مثال: خبز أبيض - 2):</label>
+    <textarea id="items" name="items" rows="4" placeholder="اكتب كل صنف وعدده بسطر لوحده" required></textarea>
 
-      <div class="products-container" id="productsContainer">
-        <div class="product-group">
-          <select class="productName" name="productName[]" required>
-            <option value="خبز عربي">خبز عربي</option>
-            <option value="خبز صاج">خبز صاج</option>
-            <option value="خبز برغر">خبز برغر</option>
-            <option value="خبز فاهيتا">خبز فاهيتا</option>
-            <option value="خبز سمون">خبز سمون</option>
-          </select>
-          <input type="number" class="productQty" name="productQty[]" placeholder="الكمية" required />
-        </div>
-      </div>
+    <button type="submit">إرسال الطلب</button>
+  </form>
 
-      <button type="button" onclick="addProduct()">إضافة صنف</button>
-      <button type="submit">إرسال الطلب</button>
-    </form>
-  </div>
+  <p id="responseMessage" style="margin-top: 20px;"></p>
 
   <script>
-    // تعبئة التاريخ تلقائيًا بتاريخ اليوم
-    document.getElementById("date").valueAsDate = new Date();
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec";
+    const form = document.getElementById("orderForm");
+    const responseMessage = document.getElementById("responseMessage");
 
-    function addProduct() {
-      const container = document.getElementById("productsContainer");
-      const group = document.createElement("div");
-      group.className = "product-group";
-
-      group.innerHTML = `
-        <select class="productName" name="productName[]" required>
-          <option value="خبز عربي">خبز عربي</option>
-          <option value="خبز صاج">خبز صاج</option>
-          <option value="خبز برغر">خبز برغر</option>
-          <option value="خبز فاهيتا">خبز فاهيتا</option>
-          <option value="خبز سمون">خبز سمون</option>
-        </select>
-        <input type="number" class="productQty" name="productQty[]" placeholder="الكمية" required />
-      `;
-
-      container.appendChild(group);
-    }
-
-    const sheetURL = "https://script.google.com/macros/s/AKfycbzjC484_cZ1su58FfZkoeTQzXvM3-nMbxAhvEgSJarctv0OGwJy29pSufai7CLLtHiw2g/exec";
-
-    document.getElementById("orderForm").addEventListener("submit", function(e) {
+    form.addEventListener("submit", e => {
       e.preventDefault();
-      const formData = new FormData(this);
-      fetch(sheetURL, { method: "POST", body: formData })
-        .then(res => alert("تم إرسال الطلب بنجاح"))
-        .catch(err => alert("حدث خطأ!"));
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: new FormData(form)
+      })
+      .then(response => {
+        responseMessage.innerText = "تم إرسال الطلب بنجاح!";
+        form.reset();
+      })
+      .catch(error => {
+        responseMessage.innerText = "حدث خطأ أثناء إرسال الطلب.";
+        console.error("Error!", error.message);
+      });
     });
   </script>
 </body>
